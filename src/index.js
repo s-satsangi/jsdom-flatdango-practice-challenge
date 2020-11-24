@@ -6,6 +6,9 @@ const showingDiv = () => document.querySelector("#showing")
 document.addEventListener('DOMContentLoaded', () => {
     //call a func that gets the JSON for the first movie
     fetchFirstFlick()
+    // - See a menu of all movies on the left side of the page.
+    //call a func to fetch the JSON for all the movies
+    fetchAllFlicks()
 })
 
 //Client -
@@ -25,6 +28,7 @@ function fetchFirstFlick(){
 function displayPosterAndShowInfo(flick){
     //display poster
     // debugger
+    console.log(flick)
     document.getElementById('poster').src = flick.poster
 
     //manage tix
@@ -79,6 +83,39 @@ function buyTix(event, flick){
     fetch(`${url}/${flick.id}`, patchObj).then(resp => resp.json()).then(flick => displayPosterAndShowInfo(flick))
     //after the patch, send the new flick back to displayPosterAndShowInfo
 }
+
+
+//CLIENT -
+// - See a menu of all movies on the left side of the page.
+function fetchAllFlicks(){
+    fetch(url).then(resp => resp.json()).then(flicks => flicks.forEach(flick =>flickUpTheMenu(flick)))
+}
+
+function flickUpTheMenu(flick){
+    console.log(flick)
+    let menuDiv = document.getElementsByClassName('film item')[0]
+        
+    let titleDiv = document.createElement('div')
+        titleDiv.innerText = flick.title
+        if(parseInt(flick.capacity)-parseInt(flick.tickets_sold) <= 0){
+            soldOutDiv = document.createElement('div')
+            soldOutDiv.style.color = 'red'
+            soldOutDiv.innerText = "(SOLD OUT)"
+            titleDiv.appendChild(soldOutDiv)
+        }
+
+        console.log(flick)
+        titleDiv.addEventListener('click', () => {
+            displayPosterAndShowInfo(flick)
+        })
+
+    menuDiv.appendChild(titleDiv)
+}
+
+
+// - Click on a movie in the menu to replace the currently displayed movie's details with the new movie's details.
+// - Buy a ticket for any movie and update the tickets sold for that movie, not just the first.
+// - Indicate in the menu which movies are sold out.
 
 
 
